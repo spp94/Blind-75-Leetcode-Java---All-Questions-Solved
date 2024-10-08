@@ -1,0 +1,77 @@
+https://leetcode.com/problems/coin-change/description/
+
+You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
+
+Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
+
+You may assume that you have an infinite number of each kind of coin.
+
+ 
+
+Example 1:
+
+Input: coins = [1,2,5], amount = 11
+Output: 3
+Explanation: 11 = 5 + 5 + 1
+Example 2:
+
+Input: coins = [2], amount = 3
+Output: -1
+Example 3:
+
+Input: coins = [1], amount = 0
+Output: 0
+
+
+Solution
+---------
+
+class Solution {
+    public int coinChange(int[] coins, int amount) {
+        int n = coins.length;
+        // int[][] dp = new int[n][amount+1];
+        // for(int[] ar : dp) {
+        //     Arrays.fill(ar, -1);
+        // } 
+        // int ans = f(n-1, coins, amount, dp);
+        // if(ans == 100000000) return -1;
+        // else return ans;
+
+        int[] dp = new int[amount+1];
+        Arrays.fill(dp, amount+1);
+        dp[0] = 0;
+        for(int i = 1; i <= amount; i++) {
+            for(int j = 0; j < coins.length; j++) {
+                if(i >= coins[j]) {
+                    dp[i] = Math.min(dp[i], 1 + dp[i - coins[j]]);
+                }
+            }
+        }
+        if(dp[amount] >= amount+1) return -1;
+        else return dp[amount];
+
+        // return dp[amount];
+    }
+    public int f(int index, int[] coins, int amount, int[][] dp) {
+        // Base case
+        if(amount == 0) {
+            return 0;
+        }
+        if(index == 0) {
+            if(amount % coins[0] == 0) {
+                return amount / coins[0];
+            } else {
+                return 100000000;
+            }
+        }
+        if(dp[index][amount] != -1) return dp[index][amount];
+        // Do all stuffs
+        int pick = 100000000;
+        if(amount >= coins[index]) {
+            pick = 1 + f(index, coins, amount - coins[index], dp);
+        }
+        int notPick = 0 + f(index-1, coins, amount, dp);
+        // Return min of all stuffs
+        return dp[index][amount] = Math.min(pick, notPick);
+    }
+}
