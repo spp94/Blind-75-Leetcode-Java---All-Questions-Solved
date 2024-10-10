@@ -52,17 +52,13 @@ class Solution {
         }
         // Do all stuffs
         // Match
+        boolean match = false;
         if(dictionary.contains(s.substring(start, end+1))) {
-            if(f(end+1, end+1, s, dictionary, dp)) {
-                dp[start][end] = 1;
-                return true;
-            } else {
-                dp[start][end] = 0;
-            }
+            match = f(end+1, end+1, s, dictionary, dp);
         }
         // Not match
-        boolean ans = f(start, end+1, s, dictionary, dp);
-        dp[start][end] = ans ? 1 : 0;
-        return ans;
+        boolean notMatch = f(start, end+1, s, dictionary, dp);
+        dp[start][end] = (notMatch || match) ? 1 : 0;
+        return notMatch || match;
     }
 }
