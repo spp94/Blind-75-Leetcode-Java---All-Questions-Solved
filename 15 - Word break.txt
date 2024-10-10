@@ -1,0 +1,68 @@
+https://leetcode.com/problems/word-break/description/
+
+Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+Note that the same word in the dictionary may be reused multiple times in the segmentation.
+
+ 
+
+Example 1:
+
+Input: s = "leetcode", wordDict = ["leet","code"]
+Output: true
+Explanation: Return true because "leetcode" can be segmented as "leet code".
+Example 2:
+
+Input: s = "applepenapple", wordDict = ["apple","pen"]
+Output: true
+Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+Note that you are allowed to reuse a dictionary word.
+Example 3:
+
+Input: s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
+Output: false
+
+
+Solution
+---------
+
+class Solution {
+    public boolean wordBreak(String s, List<String> dictionary) {
+        int[][] dp = new int[s.length()][s.length()];
+        for(int[] ar : dp) {
+            Arrays.fill(ar, -1);
+        }
+        return f(0, 0, s, new HashSet<>(dictionary), dp);
+    }
+
+    public boolean f(int start, int end, String s, Set<String> dictionary, int[][] dp) {
+        // Base case
+        if(dp[start][end] != -1) {
+            return dp[start][end] == 1 ? true : false;
+        }
+        if(end == s.length()-1) {
+            if(dictionary.contains(s.substring(start, end+1))) {
+                dp[start][end] = 1;
+                return true;
+            }
+            else {
+                dp[start][end] = 0;
+                return false;
+            }
+        }
+        // Do all stuffs
+        // Match
+        if(dictionary.contains(s.substring(start, end+1))) {
+            if(f(end+1, end+1, s, dictionary, dp)) {
+                dp[start][end] = 1;
+                return true;
+            } else {
+                dp[start][end] = 0;
+            }
+        }
+        // Not match
+        boolean ans = f(start, end+1, s, dictionary, dp);
+        dp[start][end] = ans ? 1 : 0;
+        return ans;
+    }
+}
