@@ -1,0 +1,84 @@
+https://leetcode.com/problems/alien-dictionary/description/
+
+Given a sorted dictionary of an alien language having N words and k starting alphabets of standard dictionary. Find the order of characters in the alien language. If no valid ordering of letters is possible, then return "".
+Note: Many orders may be possible for a particular test case, thus you may return any valid order and output will be 1 if the order of string returned by the function is correct else 0 denoting incorrect string returned.
+
+Examples :
+
+Input:  n = 5, k = 4, dict = {"baa","abcd","abca","cab","cad"}
+Output: 1
+Explanation: Here order of characters is 'b', 'd', 'a', 'c' Note that words are sorted and in the given language "baa" comes before "abcd", therefore 'b' is before 'a' in output.
+Similarly we can find other orders.
+Input: n = 3, k = 3, dict = {"caa","aaa","aab"}
+Output: 1
+Explanation: Here order of characters is 'c', 'a', 'b' Note that words are sorted and in the given language "caa" comes before "aaa", therefore 'c' is before 'a' in output.
+Similarly we can find other orders.
+
+
+Solution
+---------
+
+class Solution {
+    
+    public Map<Character, List<Character>> reversedList = new HashMap<>();
+    public Map<Character, Boolean> seen = new HashMap<>();
+    public StringBuilder result = new StringBuilder();
+    
+    public String alienOrder(String[] words) {
+        
+        for(String word:words){
+            for(char c:word.toCharArray()){
+                reversedList.putIfAbsent(c,new ArrayList<>());
+            }
+        }
+        
+        for(int i=0; i<words.length-1; i++){
+            String word1= words[i];
+            String word2 = words[i+1];
+            
+            if(word1.length() > word2.length() && word1.startsWith(word2)){
+                return "";
+            }
+            for(int j=0; j<Math.min(word1.length(), word2.length()); j++){
+                if(word1.charAt(j) != word2.charAt(j)){
+                    reversedList.get(word2.charAt(j)).add(word1.charAt(j));
+                    break;
+                }
+            }
+        }
+        
+        
+        for(Character c: reversedList.keySet()){
+            boolean res= dfs(c);
+            if(!res) return "";
+        }
+        
+        
+        
+        if(result.length() < reversedList.size()){
+            return "";
+        }
+        
+        return result.toString();
+        
+    }
+    
+    
+    public boolean dfs(Character c){
+        if(seen.containsKey(c)){
+            return seen.get(c);
+        }
+        
+        seen.put(c, false);
+        
+        for(Character next: reversedList.get(c)){
+            boolean res = dfs(next);
+            if(!res) return false;
+        }
+        
+        seen.put(c,true);
+        result.append(c);
+        return true;
+    }
+    
+}
